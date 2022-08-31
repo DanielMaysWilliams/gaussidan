@@ -7,8 +7,7 @@ authors = ["Daniel Williams <daniel.mays.williams@gmail.com>"]
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
 numpy = "^1.23.2"
-matplotlib = "^3.5.3"
-scipy = "^1.9.1"
+lmfit = "^1.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"

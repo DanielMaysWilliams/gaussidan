@@ -1,9 +1,8 @@
 from typing import Sequence, Union
 
 import numpy as np
-from scipy.optimize import curve_fit
+from lmfit.models import GaussianModel
 
-from gaussidan.utils import gaussian
 
 def fit_gaussian(
     data: Union[Sequence[float], np.ndarray],
@@ -18,7 +17,9 @@ def fit_gaussian(
     bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
     bin_centers = bin_centers[mask]
 
-    popt, _ = curve_fit(gaussian, bin_centers, hist)
-    height, mu, sigma = popt
+    model = GaussianModel()
+    pars = model.guess(hist, x=bin_centers)
+    out = model.fit(hist, pars, x=bin_centers)
+    results = out.best_values
 
-    return height, mu, sigma
+    return results["amplitude"], results["center"], results["sigma"]
