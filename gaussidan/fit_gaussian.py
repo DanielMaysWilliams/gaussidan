@@ -8,6 +8,7 @@ def fit_gaussian(
     data: Union[Sequence[float], np.ndarray],
     bins: Union[int, Union[Sequence[float], np.ndarray]],
     weights: Union[Sequence[float], np.ndarray] = None,
+    errors: bool = False,
 ) -> tuple[float, float, float]:
 
     hist, bin_edges = np.histogram(data, bins=bins, weights=weights)
@@ -19,7 +20,17 @@ def fit_gaussian(
 
     model = GaussianModel()
     pars = model.guess(hist, x=bin_centers)
-    out = model.fit(hist, pars, x=bin_centers)
-    results = out.best_values
-
-    return results["amplitude"], results["center"], results["sigma"]
+    result = model.fit(hist, pars, x=bin_centers)
+    # results = out.best_values
+    amplitude, center, sigma = (
+        result.params["amplitude"],
+        result.params["center"],
+        result.params["sigma"],
+    )
+    if errors:
+        return (
+            (amplitude.value, amplitude.stderr),
+            (center.value, center.stderr),
+            (sigma.value, sigma.stderr),
+        )
+    return amplitude.value, center.value, sigma.value
